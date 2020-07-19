@@ -61,7 +61,7 @@ def move_verts(zero, mesh, rand_max, it, obj):
             location[0] += math.cos(h1) * ran[count]
             location[1] += math.sin(h1) * ran[count]
             location[2] += math.sin(h2) * ran[count]
-            #location[2] = location[2] + ran[count]
+
             vert.co = location
             
         elif it == 2 and check_others(count, mesh, ran) == True :
