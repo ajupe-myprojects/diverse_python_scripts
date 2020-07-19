@@ -17,7 +17,7 @@ def sub_mod(obj,i):
 #**********************************************************************
 def check_first(count, mesh, ran):
     
-    if (count + 2) < len(mesh.vertices) and abs(ran[count] - ran[count + 1]) < 0.2 :
+    if (count + 2) < len(mesh.vertices) and (count - 1) < len(mesh.vertices) :
         return True
     else:
         return False
@@ -46,30 +46,37 @@ def move_verts(zero, mesh, rand_max, it, obj):
         
     #++ move vertices along a vector from center ++
     count = 0
-    for vert in mesh.vertices: 
+    for vert in mesh.vertices:
+        location = vert.co
+        d = math.sqrt((location[0] - zero[0]) ** 2 + (location[1] - zero[1]) ** 2 + (location[2] - zero[2]) ** 2)
         if it == 1 and check_first(count, mesh, ran) == True:
-            location = vert.co
-            #d = math.sqrt((location[0] - zero[0]) ** 2 + (location[1] - zero[1]) ** 2 + (location[2] - zero[2]) ** 2)
-            #print(d)
-            dx = zero[0] - location[0]
-            dy = zero[1] - location[1]
-            dz = zero[2] - location[2]
+            
+            dx = location[0] - zero[0]
+            dy = location[1] - zero[1]
+            dz = location[2] - zero[2]
+            
+            dx = dx / d
+            dy = dy / d
+            dz = dz / d
             
             h1 = math.atan2(dy, dx)
             h2 = math.atan2(dz, dy)
             
-            location[0] += math.cos(h1) * ran[count]
-            location[1] += math.sin(h1) * ran[count]
-            location[2] += math.sin(h2) * ran[count]
-
+            location[0] -= math.cos(h1) * ran[count]
+            location[1] -= math.sin(h1) * ran[count]
+            location[2] -= math.sin(h2) * ran[count]
+            
             vert.co = location
             
         elif it == 2 and check_others(count, mesh, ran) == True :
-            location = vert.co
 
-            dx = zero[0] - location[0]
-            dy = zero[1] - location[1]
-            dz = zero[2] - location[2]
+            dx = location[0] - zero[0]
+            dy = location[1] - zero[1]
+            dz = location[2] - zero[2]
+            
+            dx = dx / d
+            dy = dy / d
+            dz = dz / d
             
             h1 = math.atan2(dy, dx)
             h2 = math.atan2(dz, dy)
@@ -81,12 +88,14 @@ def move_verts(zero, mesh, rand_max, it, obj):
             vert.co = location
             
         else:
-            
-            location = vert.co
 
-            dx = zero[0] - location[0]
-            dy = zero[1] - location[1]
-            dz = zero[2] - location[2]
+            dx = location[0] - zero[0]
+            dy = location[1] - zero[1]
+            dz = location[2] - zero[2]
+            
+            dx = dx / d
+            dy = dy / d
+            dz = dz / d
             
             h1 = math.atan2(dy, dx)
             h2 = math.atan2(dz, dy)
@@ -120,6 +129,6 @@ for it in range(1,max_it):
     #++ decreasing the random max value to avoid weird artifacts ++
     rnd = rnd / 10.0
 
-sub_mod(pl,max_it)
+#sub_mod(pl,max_it)
 
 #++ end creation ++
