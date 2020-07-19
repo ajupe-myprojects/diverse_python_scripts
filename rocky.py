@@ -31,14 +31,31 @@ def check_others(count, mesh, ran):
         return True
     else:
         return False
+    
+#***********************
+#** calculate vectors **
+#***********************  
+def calc_vec(location ,ran, count):
+    
+    dx = location[0] / (math.sqrt(location[0]**2 + location[1]**2 + location[2]**2))
+    dy = location[1] / (math.sqrt(location[0]**2 + location[1]**2 + location[2]**2))
+    dz = location[2] / (math.sqrt(location[0]**2 + location[1]**2 + location[2]**2))
+
+
+    location[0] += dx * ran[count]
+    location[1] += dy * ran[count]
+    location[2] += dz * ran[count]
+    
+    return location
 
 #******************************************************
-#** get vertices, calculate vector and move vertices **
+#** get vertices, vector and move vertices **
 #******************************************************
 def move_verts(zero, mesh, rand_max, it, obj):
     #++ subsurf ++
     sub_mod(obj,it)
     #++ randoms ++
+    mesh = obj.data
     ran = []
     for x in range(len(mesh.vertices)):
         rx = random.uniform(0, rand_max)
@@ -48,63 +65,24 @@ def move_verts(zero, mesh, rand_max, it, obj):
     count = 0
     for vert in mesh.vertices:
         location = vert.co
-        d = math.sqrt((location[0] - zero[0]) ** 2 + (location[1] - zero[1]) ** 2 + (location[2] - zero[2]) ** 2)
-        if it == 1 and check_first(count, mesh, ran) == True:
+        #d = math.sqrt((location[0] - zero[0]) ** 2 + (location[1] - zero[1]) ** 2 + (location[2] - zero[2]) ** 2)
+        if it == 1 :
             
-            dx = location[0] - zero[0]
-            dy = location[1] - zero[1]
-            dz = location[2] - zero[2]
+            loc = calc_vec(location ,ran, count)
             
-            dx = dx / d
-            dy = dy / d
-            dz = dz / d
-            
-            h1 = math.atan2(dy, dx)
-            h2 = math.atan2(dz, dy)
-            
-            location[0] -= math.cos(h1) * ran[count]
-            location[1] -= math.sin(h1) * ran[count]
-            location[2] -= math.sin(h2) * ran[count]
-            
-            vert.co = location
+            vert.co = loc
             
         elif it == 2 and check_others(count, mesh, ran) == True :
 
-            dx = location[0] - zero[0]
-            dy = location[1] - zero[1]
-            dz = location[2] - zero[2]
+            loc = calc_vec(location ,ran, count)
             
-            dx = dx / d
-            dy = dy / d
-            dz = dz / d
-            
-            h1 = math.atan2(dy, dx)
-            h2 = math.atan2(dz, dy)
-            
-            location[0] += math.cos(h1) * ran[count]
-            location[1] += math.sin(h1) * ran[count]
-            location[2] += math.sin(h2) * ran[count]
-            
-            vert.co = location
+            vert.co = loc
             
         else:
 
-            dx = location[0] - zero[0]
-            dy = location[1] - zero[1]
-            dz = location[2] - zero[2]
+            loc = calc_vec(location ,ran, count)
             
-            dx = dx / d
-            dy = dy / d
-            dz = dz / d
-            
-            h1 = math.atan2(dy, dx)
-            h2 = math.atan2(dz, dy)
-            
-            location[0] += math.cos(h1) * ran[count]
-            location[1] += math.sin(h1) * ran[count]
-            location[2] += math.sin(h2) * ran[count]
-            
-            vert.co = location
+            vert.co = loc
 
         count += 1
         
@@ -113,9 +91,9 @@ def move_verts(zero, mesh, rand_max, it, obj):
 
 
 #++ global variables ++
-zero = (0.0, 0.0, 0.0)       
+zero = (0.0, 0.03, 0.4)       
 sub_level = 2
-rnd = 0.38
+rnd = 0.9
 max_it = 4
 
 #++ creating the object ++
