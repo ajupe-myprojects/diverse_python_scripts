@@ -48,6 +48,34 @@ def calc_vec(location ,ran, count):
     
     return location
 
+
+#******************************
+#** creating a "perlin" noise**
+#******************************
+def poor_mans_perlin(ran):
+    ran_two = ran
+    
+    point = 128
+    teilen = 2
+    for itr in range(1,7) :
+        ct = 0  
+        for z in range(len(ran)):
+            if ct < point:
+                if it == 1:
+                    wert = 0.0
+                if it >1 :
+                    wert = ran_two[z]
+                ran_two[z] = wert
+                ct += 1
+            else :
+               wert = ran[z] / teilen
+               ran_two[z] = wert
+               ct = 0
+        point = point / 2
+        teilen = teilen + 2
+        
+    return ran_two
+
 #******************************************************
 #** get vertices, vector and move vertices **
 #******************************************************
@@ -58,11 +86,16 @@ def move_verts(zero, mesh, rand_max, it, obj):
     mesh = obj.data
     ran = []
     for x in range(len(mesh.vertices)):
-        rx = random.uniform(0, rand_max)
+        rx = random.uniform(0, rand_max / it)
         ran.append(rx)
-        
+    
+    if it >= 2:
+        ran_two = poor_mans_perlin(ran)
+            
+            
     #++ move vertices along a vector from center ++
     count = 0
+    
     for vert in mesh.vertices:
         location = vert.co
         #d = math.sqrt((location[0] - zero[0]) ** 2 + (location[1] - zero[1]) ** 2 + (location[2] - zero[2]) ** 2)
@@ -73,14 +106,16 @@ def move_verts(zero, mesh, rand_max, it, obj):
             vert.co = loc
             
         elif it == 2 and check_others(count, mesh, ran) == True :
+            
+            
 
-            loc = calc_vec(location ,ran, count)
+            loc = calc_vec(location ,ran_two, count)
             
             vert.co = loc
             
         else:
 
-            loc = calc_vec(location ,ran, count)
+            loc = calc_vec(location ,ran_two, count)
             
             vert.co = loc
 
@@ -91,9 +126,9 @@ def move_verts(zero, mesh, rand_max, it, obj):
 
 
 #++ global variables ++
-zero = (0.0, 0.03, 0.4)       
+zero = (0.0, 0.0, 0.0)       
 sub_level = 2
-rnd = 0.9
+rnd = 1.1
 max_it = 4
 
 #++ creating the object ++
@@ -105,7 +140,13 @@ for it in range(1,max_it):
     
     move_verts(zero, pl.data, rnd, it, pl)
     #++ decreasing the random max value to avoid weird artifacts ++
-    rnd = rnd / 10.0
+    rnd = rnd / 5.0
+    
+    
+mesh = pl.data 
+  
+for face in mesh.polygons:
+    face.use_smooth = True
 
 #sub_mod(pl,max_it)
 
