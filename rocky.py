@@ -86,7 +86,7 @@ def move_verts(zero, mesh, rand_max, it, obj):
     mesh = obj.data
     ran = []
     for x in range(len(mesh.vertices)):
-        rx = random.uniform(0, rand_max / it)
+        rx = random.uniform(0, rand_max)
         ran.append(rx)
     
     if it >= 2:
@@ -140,13 +140,13 @@ for it in range(1,max_it):
     
     move_verts(zero, pl.data, rnd, it, pl)
     #++ decreasing the random max value to avoid weird artifacts ++
-    rnd = rnd / 5.0
+    rnd = rnd / 10
     
     
 mesh = pl.data 
   
-for face in mesh.polygons:
-    face.use_smooth = True
+#for face in mesh.polygons:
+    #face.use_smooth = True
 
 #sub_mod(pl,max_it)
 
